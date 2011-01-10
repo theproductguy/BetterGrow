@@ -61,9 +61,10 @@ BetterGrow(<OPTIONS>), i.e.
 
 For more details about BetterGrow, its implementation, usage, and examples, go to the [BetterGrow](http://tpgblog.com/BetterGrow/) site.
 
-## Author
+## Contributors
 
-[Jeremy Horn](http://tpgblog.com)
+[Jeremy Horn](http://tpgblog.com): original author
+[Steven Harman](http://stevenharman.net): max_height option
 
 ## Other
 
