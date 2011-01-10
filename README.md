@@ -44,9 +44,10 @@ BetterGrow(<OPTIONS>), i.e.
 
     $('.ta1').BetterGrow({initial_height:100px});
 
-- initial_height:	minimum height in pixels for the textarea, if the textarea is EMPTY, this is the initial height
-- on_enter:	callback function to call when ENTER is pressed within the target textarea(s)
-- do_not_enter: if true, and on_enter is NOT NULL, then the ENTER event DOES NOT CASCADE / pass-through to the text area.  if false, and on_enter is NOT NULL, then	the ENTER event will trigger the calling of on_enter() and be reflected within the textarea (i.e. the textarea displays the submitted ENTER(S))
+- initial_height: minimum height in pixels for the textarea, if the textarea is EMPTY, this is the initial height
+- max_height: the maximum height, in pixels, that the textarea will grow, afterwhich it becomes overflow:auto;
+- on_enter: callback function to call when ENTER is pressed within the target textarea(s)
+- do_not_enter: if true, and on_enter is NOT NULL, then the ENTER event DOES NOT CASCADE / pass-through to the text area.  if false, and on_enter is NOT NULL, then the ENTER event will trigger the calling of on_enter() and be reflected within the textarea (i.e. the textarea displays the submitted ENTER(S))
 
 ### EXAMPLE
     OPTIONS = 

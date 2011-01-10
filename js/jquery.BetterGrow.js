@@ -69,12 +69,14 @@
 		initial_height:		minimum height in pixels for the textarea
 		
 							if the textarea is EMPTY, this is the initial height
+
+		max_height:		the maximum height, in pixels, that the textarea will grow, afterwhich it becomes overflow:auto;
 		
 		on_enter:			callback function to call when ENTER is pressed within
 							the target textarea(s)
 		
 		do_not_enter:		if true, and on_enter is NOT NULL, 
-								then 	the ENTER event DOES NOT CASCADE / pass-through
+								then	the ENTER event DOES NOT CASCADE / pass-through
 										to the text area
 							if false, and on_enter is NOT NULL,
 								then	the ENTER event will trigger the calling of 
@@ -124,7 +126,7 @@
 			
 			// process all provided objects
 			return this.each(function() {
-			    var $this = $(this);
+					var $this = $(this);
 
 				// wonder if people would prefer this or a setting that would conditionally wrap the div 
 				//
@@ -132,7 +134,7 @@
 				if ($this.parent('div').length == 0) {
 					$this.wrap('<div style="border:0; padding:0; margin:0"></div>');
 				}
- 
+
 				// reset textfield content
 				// reset heights (these calls, right here, may be unnecessary -- brainstorm use cases
 				set_height($this, c_settings.initial_height);
@@ -163,8 +165,9 @@
 	**********************************************************************************/
 	$.fn.BetterGrow.settings = {
 		initial_height: 26,		// specified in pixels
-		on_enter:		null, 	// callback function; if specified, this is called when enter is pressed
-		do_not_enter:	true 	// if true and on_enter is not null then enter event does not cascade / pass-through to textarea
+		max_height: null,		// specified in pixels
+		on_enter:		null,		// callback function; if specified, this is called when enter is pressed
+		do_not_enter:	true	// if true and on_enter is not null then enter event does not cascade / pass-through to textarea
 		// no_div: true  // if true, NEVER wrap the content in a div, but if div not present do nothing; if false, ALWAYS wrap in  div -- maybe future RELEASE -- let's see feedback
 	};
 
@@ -215,6 +218,7 @@
 	**********************************************************************************/
 	function make_better(the_object, settings) {
 		var min_height = settings.initial_height;
+		var max_height = settings.max_height;
 
 		// initialize parent DIV
 		the_object.parent().css('height','auto');
@@ -228,7 +232,7 @@
 		
 		// bind key events
 		the_object.keydown( function(e) { 
-			textarea_grow_some(the_object, min_height);
+			textarea_grow_some(the_object, min_height, max_height);
 	
 			if (e.keyCode == 13 /* ENTER */) {
 
@@ -245,7 +249,7 @@
 		});
 		
 		the_object.keyup  ( function() { 
-			textarea_grow_some(the_object, min_height) 
+			textarea_grow_some(the_object, min_height, max_height) 
 		} );  /* important for catching ENTER */
 	}
 
@@ -259,6 +263,9 @@
 				determine how to measure the height of the textarea [browser specific]
 			
 			determine whether or not the content of the text area is 
+				> max_height, 
+					THEN set to max_height
+
 				<= min_heigh, 
 					THEN set to min_height
 	
@@ -275,9 +282,9 @@
 			any associated textarea scrollbars
 	
 	**********************************************************************************/
-	function textarea_grow_some(obj, min_height){
-		var curr_height;
-		var curr_scroll_height;
+	function textarea_grow_some(obj, min_height, max_height){
+    var curr_height,
+        curr_scroll_height;
 		
 		// do the math
 		if (!textarea_grow_some.browser_calc){
@@ -285,30 +292,34 @@
 			textarea_grow_some.browser_calc = $.browser.msie || $.browser.safari;
 
 			//does padding matter?
+			/* why not just use outerHeight() and let jQuery do this hard work? */
 			textarea_grow_some.padding_calc = textarea_grow_some.browser_calc ?
 				(	parseInt(obj.css('padding-top')) +
 					parseInt(obj.css('padding-bottom'))		) : 0;
 		}
-	 
+	
 		curr_height = obj.height();
-	 
+	
 		if (curr_height > min_height) {
 			obj.parent().css('height', obj.height() + 'px' );
-	 
+	
 			//set the height to zero to get the real content height
 			obj.height(0);
 		}
-	 
+	
 		curr_scroll_height = obj.get(0).scrollHeight - textarea_grow_some.padding_calc;
 	
 		// apply the math
-		if (curr_scroll_height > min_height) {
-			obj.height(curr_scroll_height);
+		if (max_height && (curr_scroll_height > max_height)) {
+			obj.height(max_height).css('overflow', 'auto');
+		}
+		else if (curr_scroll_height > min_height) {
+			obj.css('overflow', 'hidden').height(curr_scroll_height);
 		} else if (curr_height > min_height) {
-			obj.height(min_height);
+			obj.css('overflow', 'hidden').height(min_height);
 		}
 	 
-	 	// restore initial height setting on parent DIV
+		// restore initial height setting on parent DIV
 		obj.parent().css('height', 'auto');
 	}
 
