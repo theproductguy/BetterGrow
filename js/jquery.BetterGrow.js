@@ -282,7 +282,7 @@
 		// do the math
 		if (!textarea_grow_some.browser_calc){
 			//browser.whoami
-			textarea_grow_some.browser_calc = $.browser.msie || $.browser.safari;
+			textarea_grow_some.browser_calc = $.browser.msie || $.browser.safari || $.browser.webkit;
 
 			//does padding matter?
 			textarea_grow_some.padding_calc = textarea_grow_some.browser_calc ?
